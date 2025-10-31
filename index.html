@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Galaxy Mentor 🌌🤖</title>
+
+  <!-- Three.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.155.0/build/three.min.js"></script>
+  <!-- Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+      font-family: 'Poppins', sans-serif;
+      color: #fff;
+    }
+
+    #bg {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+
+    .container {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 90%;
+      max-width: 600px;
+      text-align: center;
+      background: rgba(0,0,0,0.55);
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 0 25px #00ffcc;
+      backdrop-filter: blur(8px);
+    }
+
+    h1 {
+      color: #00ffcc;
+      font-size: 2em;
+    }
+
+    .robot {
+      font-size: 60px;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+      100% { transform: translateY(0px); }
+    }
+
+    textarea {
+      width: 100%;
+      height: 80px;
+      border: none;
+      border-radius: 10px;
+      padding: 10px;
+      font-size: 1em;
+      resize: none;
+      margin-top: 15px;
+    }
+
+    button {
+      margin-top: 10px;
+      background: #00ffcc;
+      border: none;
+      color: #000;
+      padding: 10px 20px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+    button:hover {
+      background: #00ffaa;
+      transform: scale(1.05);
+    }
+
+    .response {
+      margin-top: 20px;
+      text-align: left;
+      background: rgba(255,255,255,0.1);
+      padding: 15px;
+      border-radius: 10px;
+      min-height: 100px;
+    }
+
+    .voice {
+      margin-top: 10px;
+      cursor: pointer;
+      color: #00ffcc;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="bg"></canvas>
+
+  <div class="container">
+    <div class="robot">🤖</div>
+    <h1>AI Galaxy Mentor</h1>
+    <p>Your personal robot teacher for earning with AI 🌌</p>
+
+    <textarea id="userInput" placeholder="Ask: How can I earn money using AI?"></textarea><br>
+    <button onclick="askAI()">Ask Mentor</button>
+
+    <div class="response" id="responseBox"></div>
+    <div class="voice" onclick="speak()">🔊 Let AI Speak</div>
+  </div>
+
+  <script>
+    // 3D Galaxy Background
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({canvas: document.getElementById('bg')});
+    renderer.setSize(window.innerWidth, window.innerHeight);
+
+    const starsGeometry = new THREE.BufferGeometry();
+    const starsCount = 2000;
+    const starVertices = [];
+    for (let i = 0; i < starsCount; i++) {
+      const x = (Math.random() - 0.5) * 2000;
+      const y = (Math.random() - 0.5) * 2000;
+      const z = (Math.random() - 0.5) * 2000;
+      starVertices.push(x, y, z);
+    }
+    starsGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starVertices, 3));
+    const starsMaterial = new THREE.PointsMaterial({color: 0x00ffff});
+    const stars = new THREE.Points(starsGeometry, starsMaterial);
+    scene.add(stars);
+
+    camera.position.z = 1;
+    function animate() {
+      requestAnimationFrame(animate);
+      stars.rotation.x += 0.0005;
+      stars.rotation.y += 0.001;
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    // AI Mentor Logic
+    const responses = [
+      "💡 Use ChatGPT or Claude to offer AI writing or idea generation services on Fiverr.",
+      "🎥 Create faceless YouTube channels using AI voice and image tools.",
+      "📱 Build and sell AI chatbots for small businesses.",
+      "🖼️ Generate and sell AI art on marketplaces like Etsy.",
+      "🧠 Start an AI learning course or eBook on Gumroad or Udemy.",
+      "🤖 Use automation tools to manage multiple income streams!"
+    ];
+
+    let lastResponse = "";
+
+    function askAI() {
+      const input = document.getElementById("userInput").value.trim();
+      const box = document.getElementById("responseBox");
+
+      if (!input) {
+        box.innerHTML = "<p>Please ask something...</p>";
+        return;
+      }
+
+      box.innerHTML = "<p>🤔 Calculating AI strategy...</p>";
+      const random = responses[Math.floor(Math.random() * responses.length)];
+      setTimeout(() => {
+        lastResponse = random;
+        box.innerHTML = `<p><strong>🤖 Mentor:</strong> ${random}</p>`;
+        speak();
+      }, 1000);
+    }
+
+    function speak() {
+      if (!lastResponse) return;
+      const utter = new SpeechSynthesisUtterance(lastResponse);
+      utter.voice = speechSynthesis.getVoices()[0];
+      utter.pitch = 1;
+      utter.rate = 1;
+      speechSynthesis.speak(utter);
+    }
+  </script>
+</body>
+</html>
